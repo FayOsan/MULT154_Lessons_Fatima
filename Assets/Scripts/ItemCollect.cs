@@ -49,6 +49,7 @@ public class ItemCollect : NetworkBehaviour
     [ClientRpc]
     void RpcItemCollected(Item.VegetableType itemType)
     {
+        if (isServer) return;
         ItemCollected?.Invoke(itemType);
     }
 
