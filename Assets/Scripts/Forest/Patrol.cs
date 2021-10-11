@@ -25,12 +25,14 @@ public class Patrol : MonoBehaviour
         {
             currntWPIndex = 0;
         }
+        Debug.Log("GettingNextWayPoint " + currntWPIndex );
         return waypoints[currntWPIndex];
     }
 
     // Update is called once per frame
     public void PatrolWaypoints()
     {
+        Debug.Log("PatrolWayPoints");
         if(Vector3.Distance(transform.position, currentWP.transform.position) < WP_THRESHOLD)
         {
             currentWP = GetNextWaypoint();
