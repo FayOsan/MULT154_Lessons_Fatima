@@ -9,6 +9,8 @@ public class NavPlayerMovement : MonoBehaviour
     Rigidbody rgBody = null;
     float trans = 0;
     float rotate = 0;
+    private Animator anim;
+    private Camera camera;
 
     public delegate void DropHive(Vector3 pos);
     public static event DropHive DroppedHive;
@@ -16,6 +18,8 @@ public class NavPlayerMovement : MonoBehaviour
     private void Start()
     {
         rgBody = GetComponent<Rigidbody>();
+        anim = GetComponentInChildren<Animator>();
+        camera = GetComponentInChildren<Camera>();
     }
     void Update()
     {
@@ -28,6 +32,8 @@ public class NavPlayerMovement : MonoBehaviour
         // The value is in the range -1 to 1
         float translation = Input.GetAxis("Vertical");
         float rotation = Input.GetAxis("Horizontal");
+
+        anim.SetFloat("speed", translation);
 
         trans += translation;
         rotate += rotation;
@@ -43,5 +49,28 @@ public class NavPlayerMovement : MonoBehaviour
         Vector3 move = transform.forward * trans;
         rgBody.velocity = move * speed * Time.deltaTime;
         trans = 0;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.CompareTag("Hazard"))
+        {
+            anim.SetTrigger("died");
+            StartCoroutine(ZoomOut());
+        }
+        else
+        {
+            anim.SetTrigger("twitchLeftEar");
+        }
+    }
+
+    IEnumerator ZoomOut()
+    {
+        const int ITERATIONS = 25;
+        for(int z = 0; z < 10; z++)
+        {
+            camera.transform.Translate(camera.transform.forward * -1 * 15.0f / ITERATIONS);
+            yield return new WaitForSeconds(1.0f / ITERATIONS);
+        }
     }
 }
